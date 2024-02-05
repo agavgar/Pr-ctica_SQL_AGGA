@@ -693,10 +693,10 @@ insert into Pelicula (titulo, genero, sinopsis, director)
 select distinct tp.titulo, tp.genero, tp.sinopsis, tp.director 
 from tmp_videoclub tp;
 
-insert into Copia_Pelicula 
+insert into Copia_Pelicula (id_copia, titulo)
 select distinct tp.id_copia, tp.titulo
 from tmp_videoclub tp
-where tp.id_copia is not null
+where tp.id_copia is not null;
 
 insert into Prestamo (id_copia, id_socio, fecha_prestamo, fecha_devolucion)
 select cp.id_copia, s.id_socio, tp.fecha_alquiler, tp.fecha_devolucion
@@ -704,7 +704,7 @@ from tmp_videoclub tp
 join Socio s on s.numero_identificacion = tp.dni
 join copia_pelicula cp on cp.id_copia = tp.id_copia;
 
-drop table if exists tmp_videoclub;
+-- drop table if exists tmp_videoclub;
 
 -- */
 
