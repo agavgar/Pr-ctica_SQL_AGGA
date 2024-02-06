@@ -704,32 +704,39 @@ from tmp_videoclub tp
 join Socio s on s.numero_identificacion = tp.dni
 join copia_pelicula cp on cp.id_copia = tp.id_copia;
 
--- drop table if exists tmp_videoclub;
+drop table if exists tmp_videoclub;
 
 -- */
 
 -- Querys:
 
 -- 1: Peliculas disponibles -> Resultado debe dar: TITANIC, GLADIATOR, EL PADRINO, EL PADRINO (EN MIS TESTS) -- OK
-select COUNT(cp.ID_Copia) as Copias, cp.Titulo
+select COUNT(cp.id_copia) as copias, cp.titulo
 from Copia_Pelicula cp
-group by cp.Titulo
-order by Copias desc, cp.Titulo;
+group by cp.titulo
+order by copias desc, cp.titulo;
 
 -- 2: Genero favorito de cada uno de los socios -> Resultado debe dar: Juan, DRama, Carlos fantasia, Lucia ciencia ficcion, David Crimen, Sara Fantasia
 -- Todo genial e incluso algo me ha pasado, que es que me salen todos los generos favoritos queriendo solo uno.
 -- Pero de todos los alquileres, creo que voy a dejarlo así ya que es una recomendacion mejor saber todas las combinaciones
-select s.ID_Socio, s.Nombre, g.Genero
+select s.id_socio, s.nombre, g.generos, g.genero 
 from Socio s
 join (
-    select pr.ID_Socio, p.Genero
+    select pr.id_socio, p.genero, COUNT(p.genero) as generos
     from Prestamo pr
-    join Copia_Pelicula cp on pr.ID_Copia = cp.ID_Copia
-    join Pelicula p on cp.Titulo = p.Titulo
-    group by pr.ID_Socio, p.Genero
-    order by COUNT(*) desc
-) as g on s.ID_Socio = g.ID_Socio
-group by s.ID_Socio, s.Nombre, g.Genero
-order by s.id_Socio asc;
+    join Copia_Pelicula cp on pr.id_copia = cp.id_copia
+    join Pelicula p on cp.titulo = p.titulo
+    group by pr.id_socio, p.genero
+) as g on s.id_socio = g.id_socio
+group by s.id_socio, s.nombre, g.generos, g.genero
+order by s.id_socio asc, g.generos desc;
+/*
+select pr.id_socio, s.nombre, p.genero, COUNT(*) as generos
+from Prestamo pr
+join Copia_Pelicula cp on pr.id_copia = cp.ID_Copia
+join Pelicula p on cp.Titulo = p.Titulo
+join Socio s on pr.id_socio = s.id_socio
+group by pr.ID_Socio, p.Genero;
+*/
 
 -- */
